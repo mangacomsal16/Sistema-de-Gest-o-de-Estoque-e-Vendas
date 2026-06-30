@@ -1,0 +1,100 @@
+// =============================================================
+// Schema do banco de dados — Sistema de Gestão de Estoque/Vendas
+// PostgreSQL + Prisma
+// Modelos: User, Category, Product, Sale, SaleItem
+// =============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  CASHIER
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  PIX
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(ADMIN)
+  sales     Sale[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  color     String    @default("#4f46e5") // cor usada nos gráficos/badges
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("categories")
+}
+
+model Product {
+  id          String     @id @default(uuid())
+  name        String
+  sku         String     @unique
+  description String?
+  price       Decimal    @db.Decimal(10, 2)
+  costPrice   Decimal?   @db.Decimal(10, 2)
+  stock       Int        @default(0)
+  minStock    Int        @default(5) // limite para alerta de estoque baixo
+  active      Boolean    @default(true)
+  categoryId  String
+  category    Category   @relation(fields: [categoryId], references: [id])
+  saleItems   SaleItem[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([categoryId])
+  @@index([name])
+  @@map("products")
+}
+
+model Sale {
+  id            String        @id @default(uuid())
+  total         Decimal       @db.Decimal(10, 2)
+  paymentMethod PaymentMethod @default(CASH)
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  items         SaleItem[]
+  createdAt     DateTime      @default(now())
+
+  @@index([createdAt])
+  @@index([userId])
+  @@map("sales")
+}
+
+model SaleItem {
+  id        String  @id @default(uuid())
+  saleId    String
+  sale      Sale    @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  unitPrice Decimal @db.Decimal(10, 2)
+  subtotal  Decimal @db.Decimal(10, 2)
+
+  @@index([saleId])
+  @@index([productId])
+  @@map("sale_items")
+}
