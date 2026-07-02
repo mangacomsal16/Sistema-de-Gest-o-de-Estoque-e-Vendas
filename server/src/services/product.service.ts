@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { AppError } from '../utils/AppError';
+import { stockMovementService } from './stockMovement.service';
 
 // Converte os campos Decimal do Prisma em number e adiciona o status de estoque.
 function serialize(product: any) {
@@ -73,38 +74,66 @@ export const productService = {
     return serialize(product);
   },
 
-  async create(data: any) {
-    const product = await prisma.product.create({
-      data: {
-        name: data.name,
-        sku: data.sku,
-        description: data.description ?? null,
-        price: data.price,
-        costPrice: data.costPrice ?? null,
-        stock: data.stock,
-        minStock: data.minStock,
-        categoryId: data.categoryId,
-      },
-      include: { category: true },
+  async create(data: any, userId: string) {
+    const product = await prisma.$transaction(async (tx) => {
+      const created = await tx.product.create({
+        data: {
+          name: data.name,
+          sku: data.sku,
+          description: data.description ?? null,
+          price: data.price,
+          costPrice: data.costPrice ?? null,
+          stock: data.stock,
+          minStock: data.minStock,
+          categoryId: data.categoryId,
+        },
+        include: { category: true },
+      });
+
+      if (created.stock > 0) {
+        await stockMovementService.record(tx, {
+          productId: created.id,
+          quantity: created.stock,
+          reason: 'CREATION',
+          userId,
+        });
+      }
+
+      return created;
     });
     return serialize(product);
   },
 
-  async update(id: string, data: any) {
-    await this.getById(id);
-    const product = await prisma.product.update({
-      where: { id },
-      data: {
-        name: data.name,
-        sku: data.sku,
-        description: data.description,
-        price: data.price,
-        costPrice: data.costPrice,
-        stock: data.stock,
-        minStock: data.minStock,
-        categoryId: data.categoryId,
-      },
-      include: { category: true },
+  async update(id: string, data: any, userId: string) {
+    const existing = await this.getById(id);
+    const product = await prisma.$transaction(async (tx) => {
+      const updated = await tx.product.update({
+        where: { id },
+        data: {
+          name: data.name,
+          sku: data.sku,
+          description: data.description,
+          price: data.price,
+          costPrice: data.costPrice,
+          stock: data.stock,
+          minStock: data.minStock,
+          categoryId: data.categoryId,
+        },
+        include: { category: true },
+      });
+
+      const delta = updated.stock - existing.stock;
+      if (delta !== 0) {
+        await stockMovementService.record(tx, {
+          productId: id,
+          quantity: delta,
+          reason: 'ADJUSTMENT',
+          note: 'Ajuste manual via edição de produto.',
+          userId,
+        });
+      }
+
+      return updated;
     });
     return serialize(product);
   },

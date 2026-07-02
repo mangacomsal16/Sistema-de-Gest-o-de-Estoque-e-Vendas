@@ -25,15 +25,23 @@ enum PaymentMethod {
   PIX
 }
 
+enum StockMovementReason {
+  CREATION
+  RESTOCK
+  ADJUSTMENT
+  SALE
+}
+
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role     @default(ADMIN)
-  sales     Sale[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String          @id @default(uuid())
+  name           String
+  email          String          @unique
+  password       String
+  role           Role            @default(ADMIN)
+  sales          Sale[]
+  stockMovements StockMovement[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 
   @@map("users")
 }
@@ -50,20 +58,21 @@ model Category {
 }
 
 model Product {
-  id          String     @id @default(uuid())
-  name        String
-  sku         String     @unique
-  description String?
-  price       Decimal    @db.Decimal(10, 2)
-  costPrice   Decimal?   @db.Decimal(10, 2)
-  stock       Int        @default(0)
-  minStock    Int        @default(5) // limite para alerta de estoque baixo
-  active      Boolean    @default(true)
-  categoryId  String
-  category    Category   @relation(fields: [categoryId], references: [id])
-  saleItems   SaleItem[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id             String          @id @default(uuid())
+  name           String
+  sku            String          @unique
+  description    String?
+  price          Decimal         @db.Decimal(10, 2)
+  costPrice      Decimal?        @db.Decimal(10, 2)
+  stock          Int             @default(0)
+  minStock       Int             @default(5) // limite para alerta de estoque baixo
+  active         Boolean         @default(true)
+  categoryId     String
+  category       Category        @relation(fields: [categoryId], references: [id])
+  saleItems      SaleItem[]
+  stockMovements StockMovement[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 
   @@index([categoryId])
   @@index([name])
@@ -97,4 +106,21 @@ model SaleItem {
   @@index([saleId])
   @@index([productId])
   @@map("sale_items")
+}
+
+// Registro de auditoria de cada alteração de estoque (entrada/saída/ajuste).
+model StockMovement {
+  id        String              @id @default(uuid())
+  productId String
+  product   Product             @relation(fields: [productId], references: [id])
+  quantity  Int // positivo = entrada, negativo = saída
+  reason    StockMovementReason
+  note      String?
+  userId    String
+  user      User                @relation(fields: [userId], references: [id])
+  createdAt DateTime            @default(now())
+
+  @@index([productId])
+  @@index([createdAt])
+  @@map("stock_movements")
 }

@@ -28,10 +28,10 @@ export const productController = {
     res.json(await productService.getById(req.params.id));
   },
   async create(req: Request, res: Response) {
-    res.status(201).json(await productService.create(req.body));
+    res.status(201).json(await productService.create(req.body, req.user!.sub));
   },
   async update(req: Request, res: Response) {
-    res.json(await productService.update(req.params.id, req.body));
+    res.json(await productService.update(req.params.id, req.body, req.user!.sub));
   },
   async remove(req: Request, res: Response) {
     await productService.remove(req.params.id);

@@ -9,6 +9,7 @@ import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 import { ProductFilters } from '../components/products/ProductFilters';
 import { ProductTable } from '../components/products/ProductTable';
 import { ProductFormModal } from '../components/products/ProductFormModal';
+import { StockHistoryPanel } from '../components/products/StockHistoryPanel';
 import { useProducts, useDeleteProduct } from '../hooks/useProducts';
 import { useCategories } from '../hooks/useCategories';
 import { useDebounce } from '../hooks/useDebounce';
@@ -24,6 +25,7 @@ export function ProductsPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
   const [deleting, setDeleting] = useState<Product | null>(null);
+  const [historyProduct, setHistoryProduct] = useState<Product | null>(null);
 
   const debouncedSearch = useDebounce(search);
   const { notify } = useToast();
@@ -92,6 +94,7 @@ export function ProductsPage() {
         ) : !data || data.data.length === 0 ? (
           <EmptyState
             icon={<PackageX size={44} />}
+            image="/media/empty-state.svg"
             title="Nenhum produto encontrado"
             description="Ajuste os filtros ou cadastre um novo produto no estoque."
           />
@@ -101,6 +104,7 @@ export function ProductsPage() {
               products={data.data}
               onEdit={openEdit}
               onDelete={setDeleting}
+              onHistory={setHistoryProduct}
               onSell={(p) => {
                 setEditing(p);
                 window.location.href = '/vendas';
@@ -118,6 +122,7 @@ export function ProductsPage() {
       </Card>
 
       <ProductFormModal open={formOpen} onClose={() => setFormOpen(false)} product={editing} categories={categories} />
+      <StockHistoryPanel open={Boolean(historyProduct)} onClose={() => setHistoryProduct(null)} product={historyProduct} />
       <ConfirmDialog
         open={Boolean(deleting)}
         title="Remover produto"

@@ -1,6 +1,7 @@
 import { PaymentMethod, Prisma } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { AppError } from '../utils/AppError';
+import { stockMovementService } from './stockMovement.service';
 
 function serializeSale(sale: any) {
   return {
@@ -59,6 +60,16 @@ export const saleService = {
         },
         include: { items: { include: { product: true } }, user: { select: { name: true } } },
       });
+
+      for (const item of lineItems) {
+        await stockMovementService.record(tx, {
+          productId: item.productId,
+          quantity: -item.quantity,
+          reason: 'SALE',
+          note: `Venda #${sale.id}`,
+          userId,
+        });
+      }
 
       return serializeSale(sale);
     });

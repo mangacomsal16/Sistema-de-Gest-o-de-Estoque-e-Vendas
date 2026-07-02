@@ -2,6 +2,7 @@
 export type Role = 'ADMIN' | 'MANAGER' | 'CASHIER';
 export type PaymentMethod = 'CASH' | 'CARD' | 'PIX';
 export type StockStatus = 'IN_STOCK' | 'LOW' | 'OUT';
+export type StockMovementReason = 'CREATION' | 'RESTOCK' | 'ADJUSTMENT' | 'SALE';
 
 export interface User {
   id: string;
@@ -83,6 +84,16 @@ export interface DashboardStats {
     createdAt: string;
   }[];
   topProducts: { productId: string; name: string; quantity: number; revenue: number }[];
+}
+
+export interface StockMovement {
+  id: string;
+  productId: string;
+  quantity: number;
+  reason: StockMovementReason;
+  note?: string | null;
+  user?: { name: string };
+  createdAt: string;
 }
 
 export interface ProductFilters {
