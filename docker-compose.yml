@@ -1,16 +1,19 @@
 # Sobe apenas o PostgreSQL para desenvolvimento local.
 # Uso: docker compose up -d
+# As credenciais vêm do arquivo .env na raiz (copie .env.example para .env e ajuste).
+# Atenção: em produção não exponha a porta 5432 publicamente — mantenha o banco
+# acessível apenas dentro da rede interna/privada.
 services:
   postgres:
     image: postgres:16-alpine
     container_name: estoque_vendas_db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: estoque_vendas
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-estoque_vendas}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - estoque_pgdata:/var/lib/postgresql/data
 
