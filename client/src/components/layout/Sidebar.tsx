@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { LayoutDashboard, Package, ShoppingCart, Boxes } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { useDashboard } from '../../hooks/useDashboard';
@@ -18,7 +19,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
       {/* Fundo escuro no mobile */}
       <div
         className={cn(
-          'fixed inset-0 z-30 bg-slate-900/40 lg:hidden',
+          'fixed inset-0 z-30 bg-slate-900/40 backdrop-blur-sm transition-opacity lg:hidden',
           open ? 'block' : 'hidden'
         )}
         onClick={onClose}
@@ -31,11 +32,11 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
       >
         {/* Marca */}
         <div className="flex items-center gap-3 px-5 py-5">
-          <div className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-brand-500 to-indigo-400 text-white">
+          <div className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-brand-500 to-indigo-400 text-white shadow-glow">
             <Boxes size={20} />
           </div>
           <div>
-            <div className="text-[15px] font-semibold text-white">Estoque &amp; Vendas</div>
+            <div className="font-display text-[15px] font-bold text-white">Estoque &amp; Vendas</div>
             <div className="text-[10px] uppercase tracking-wider text-slate-500">Gestão</div>
           </div>
         </div>
@@ -43,25 +44,41 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
         {/* Navegação */}
         <nav className="flex-1 px-3 py-2">
           <p className="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Menu</p>
-          {NAV.map(({ to, label, icon: Icon, end }) => (
+          {NAV.map(({ to, label, icon: Icon, end }, i) => (
             <NavLink
               key={to}
               to={to}
               end={end}
               onClick={onClose}
-              className={({ isActive }) =>
-                cn(
-                  'mb-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition',
-                  isActive ? 'bg-brand-500 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
-                )
-              }
+              className="mb-1 block"
             >
-              <Icon size={18} />
-              {label}
-              {to === '/produtos' && lowCount > 0 && (
-                <span className="ml-auto grid h-5 min-w-[20px] place-items-center rounded-full bg-red-500 px-1 text-[11px] font-semibold text-white">
-                  {lowCount}
-                </span>
+              {({ isActive }) => (
+                <motion.div
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.06, duration: 0.3 }}
+                  className={cn(
+                    'relative flex items-center gap-3 overflow-hidden rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                    isActive ? 'text-white' : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
+                  )}
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="sidebar-active"
+                      className="absolute inset-0 rounded-lg bg-brand-500"
+                      transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                    />
+                  )}
+                  <span className="relative z-10 flex w-full items-center gap-3">
+                    <Icon size={18} />
+                    {label}
+                    {to === '/produtos' && lowCount > 0 && (
+                      <span className="ml-auto grid h-5 min-w-[20px] place-items-center rounded-full bg-red-500 px-1 text-[11px] font-semibold text-white">
+                        {lowCount}
+                      </span>
+                    )}
+                  </span>
+                </motion.div>
               )}
             </NavLink>
           ))}

@@ -39,12 +39,12 @@ export function ConfirmDialog({
       }
     >
       <div className="flex items-start gap-4">
-        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-red-50 text-red-500">
+        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-red-50 text-red-500 dark:bg-red-500/10">
           <Trash2 size={22} />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-slate-800">{title}</h3>
-          <p className="mt-1 text-sm text-slate-500">{message}</p>
+          <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{title}</h3>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{message}</p>
         </div>
       </div>
     </Modal>

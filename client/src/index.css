@@ -1,14 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply bg-slate-100 text-slate-900 font-sans antialiased;
+    @apply bg-slate-100 text-slate-900 font-sans antialiased transition-colors duration-300;
+  }
+  .dark body {
+    @apply bg-slate-950 text-slate-200;
   }
   /* Números tabulares para valores monetários e métricas */
   .tnum {
     font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply border border-white/10 bg-white/60 backdrop-blur-xl dark:bg-white/5;
+  }
+  .aurora-bg {
+    @apply pointer-events-none fixed inset-0 -z-10 overflow-hidden;
+  }
+  .aurora-blob {
+    @apply absolute rounded-full blur-3xl opacity-40 dark:opacity-30;
   }
 }
 
@@ -22,4 +39,7 @@
   border-radius: 6px;
   border: 2px solid transparent;
   background-clip: content-box;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
 }

@@ -13,7 +13,7 @@ export function Pagination({ page, totalPages, total, pageSize, onChange }: Pagi
   const to = Math.min(page * pageSize, total);
 
   return (
-    <div className="flex items-center justify-between gap-4 border-t border-slate-200 px-5 py-3 text-sm text-slate-500">
+    <div className="flex items-center justify-between gap-4 border-t border-slate-200 px-5 py-3 text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
       <span className="tnum">
         {from}–{to} de {total}
       </span>
@@ -21,7 +21,7 @@ export function Pagination({ page, totalPages, total, pageSize, onChange }: Pagi
         <button
           onClick={() => onChange(page - 1)}
           disabled={page <= 1}
-          className="grid h-8 w-8 place-items-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent"
+          className="grid h-8 w-8 place-items-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
         >
           <ChevronLeft size={16} />
         </button>
@@ -31,7 +31,7 @@ export function Pagination({ page, totalPages, total, pageSize, onChange }: Pagi
         <button
           onClick={() => onChange(page + 1)}
           disabled={page >= totalPages}
-          className="grid h-8 w-8 place-items-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent"
+          className="grid h-8 w-8 place-items-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
         >
           <ChevronRight size={16} />
         </button>

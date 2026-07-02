@@ -1,4 +1,5 @@
 import { Receipt } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Card, CardHeader } from '../ui/Card';
 import { Pill } from '../ui/Badge';
 import { Spinner } from '../ui/Spinner';
@@ -14,7 +15,10 @@ export function SalesHistory() {
 
   return (
     <Card>
-      <CardHeader title="Histórico de vendas" action={<span className="text-xs text-slate-400">{data?.total ?? 0} venda(s)</span>} />
+      <CardHeader
+        title="Histórico de vendas"
+        action={<span className="text-xs text-slate-400">{data?.total ?? 0} venda(s)</span>}
+      />
       {isLoading && !data ? (
         <Spinner />
       ) : !data || data.data.length === 0 ? (
@@ -23,31 +27,41 @@ export function SalesHistory() {
         <>
           <div className="max-h-[520px] overflow-auto">
             <table className="w-full text-sm">
-              <thead className="sticky top-0 bg-slate-50">
-                <tr className="border-b border-slate-200 text-left text-[11px] uppercase tracking-wide text-slate-500">
+              <thead className="sticky top-0 bg-slate-50 dark:bg-slate-900">
+                <tr className="border-b border-slate-200 text-left text-[11px] uppercase tracking-wide text-slate-500 dark:border-slate-800 dark:text-slate-400">
                   <th className="px-5 py-3 font-semibold">Itens</th>
                   <th className="px-3 py-3 font-semibold">Pagamento</th>
                   <th className="px-5 py-3 text-right font-semibold">Total</th>
                 </tr>
               </thead>
               <tbody>
-                {data.data.map((sale) => (
-                  <tr key={sale.id} className="border-b border-slate-100 last:border-0 align-top hover:bg-slate-50">
+                {data.data.map((sale, i) => (
+                  <motion.tr
+                    key={sale.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: Math.min(i, 8) * 0.03 }}
+                    className="border-b border-slate-100 last:border-0 align-top hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/40"
+                  >
                     <td className="px-5 py-3">
                       <div className="text-xs text-slate-400">{formatDateTime(sale.createdAt)}</div>
                       <ul className="mt-1 space-y-0.5">
                         {sale.items.map((it) => (
-                          <li key={it.id} className="text-[13px] text-slate-600">
+                          <li key={it.id} className="text-[13px] text-slate-600 dark:text-slate-300">
                             {it.quantity}× {it.product?.name ?? 'Produto'}
                           </li>
                         ))}
                       </ul>
                     </td>
                     <td className="px-3 py-3">
-                      <Pill className="bg-slate-100 text-slate-600">{PAYMENT_LABELS[sale.paymentMethod]}</Pill>
+                      <Pill className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                        {PAYMENT_LABELS[sale.paymentMethod]}
+                      </Pill>
                     </td>
-                    <td className="px-5 py-3 text-right font-semibold text-slate-700 tnum">{formatCurrency(sale.total)}</td>
-                  </tr>
+                    <td className="px-5 py-3 text-right font-semibold text-slate-700 tnum dark:text-slate-200">
+                      {formatCurrency(sale.total)}
+                    </td>
+                  </motion.tr>
                 ))}
               </tbody>
             </table>

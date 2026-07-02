@@ -28,7 +28,7 @@ export function ProductFilters({ search, onSearch, categoryId, onCategory, statu
           value={search}
           onChange={(e) => onSearch(e.target.value)}
           placeholder="Buscar por nome ou SKU..."
-          className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+          className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm text-slate-800 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"
         />
       </div>
       <Select value={categoryId} onChange={(e) => onCategory(e.target.value)} className="sm:w-48">

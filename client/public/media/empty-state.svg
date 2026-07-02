@@ -1,0 +1,44 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="box-top" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#818cf8" />
+      <stop offset="100%" stop-color="#4f46e5" />
+    </linearGradient>
+    <linearGradient id="box-left" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4338ca" />
+      <stop offset="100%" stop-color="#3730a3" />
+    </linearGradient>
+    <linearGradient id="box-right" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#4f46e5" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#818cf8" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#818cf8" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <circle cx="100" cy="105" r="78" fill="url(#glow)" />
+
+  <!-- flaps -->
+  <polygon points="55,80 100,60 100,95 55,110" fill="url(#box-left)" opacity="0.85" />
+  <polygon points="145,80 100,60 100,95 145,110" fill="url(#box-right)" opacity="0.85" />
+
+  <!-- box body -->
+  <polygon points="55,95 100,113 145,95 145,150 100,168 55,150" fill="url(#box-left)" />
+  <polygon points="100,113 145,95 145,150 100,168" fill="url(#box-right)" />
+  <polygon points="55,95 100,113 145,95 100,78" fill="url(#box-top)" />
+
+  <!-- sparkles -->
+  <g fill="#a5b4fc">
+    <circle cx="45" cy="55" r="3.5">
+      <animate attributeName="opacity" values="0.2;1;0.2" dur="2.6s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="160" cy="70" r="2.5">
+      <animate attributeName="opacity" values="1;0.2;1" dur="3.2s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="150" cy="140" r="3">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="2.2s" repeatCount="indefinite" />
+    </circle>
+  </g>
+</svg>

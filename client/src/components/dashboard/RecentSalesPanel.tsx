@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Receipt } from 'lucide-react';
 import { Card, CardHeader } from '../ui/Card';
 import { Button } from '../ui/Button';
@@ -26,19 +27,27 @@ export function RecentSalesPanel({ sales }: { sales: DashboardStats['recentSales
         <div className="max-h-[300px] overflow-auto">
           <table className="w-full text-sm">
             <tbody>
-              {sales.map((s) => (
-                <tr key={s.id} className="border-b border-slate-100 last:border-0">
+              {sales.map((s, i) => (
+                <motion.tr
+                  key={s.id}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: Math.min(i, 8) * 0.04, duration: 0.25 }}
+                  className="border-b border-slate-100 last:border-0 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/50"
+                >
                   <td className="px-5 py-3">
-                    <div className="font-semibold text-slate-700">{s.itemCount} item(s)</div>
+                    <div className="font-semibold text-slate-700 dark:text-slate-200">{s.itemCount} item(s)</div>
                     <div className="text-xs text-slate-400">{formatDateTime(s.createdAt)}</div>
                   </td>
                   <td className="px-2 py-3">
-                    <Pill className="bg-slate-100 text-slate-600">{PAYMENT_LABELS[s.paymentMethod]}</Pill>
+                    <Pill className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                      {PAYMENT_LABELS[s.paymentMethod]}
+                    </Pill>
                   </td>
-                  <td className="px-5 py-3 text-right font-semibold text-slate-700 tnum">
+                  <td className="px-5 py-3 text-right font-semibold text-slate-700 tnum dark:text-slate-200">
                     {formatCurrency(s.total)}
                   </td>
-                </tr>
+                </motion.tr>
               ))}
             </tbody>
           </table>

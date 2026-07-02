@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Plus, Trash2, ShoppingCart } from 'lucide-react';
 import { Card, CardHeader } from '../ui/Card';
 import { Button } from '../ui/Button';
@@ -101,13 +102,13 @@ export function SaleBuilder({ products }: { products: Product[] }) {
         </div>
 
         {/* Itens do carrinho */}
-        <div className="mt-5 rounded-xl border border-slate-200">
+        <div className="mt-5 rounded-xl border border-slate-200 dark:border-slate-800">
           {cart.length === 0 ? (
             <EmptyState icon={<ShoppingCart size={36} />} title="Carrinho vazio" description="Adicione produtos para montar a venda." />
           ) : (
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-100 text-left text-[11px] uppercase tracking-wide text-slate-400">
+                <tr className="border-b border-slate-100 text-left text-[11px] uppercase tracking-wide text-slate-400 dark:border-slate-800">
                   <th className="px-4 py-2.5 font-semibold">Produto</th>
                   <th className="px-4 py-2.5 text-center font-semibold">Qtd</th>
                   <th className="px-4 py-2.5 text-right font-semibold">Subtotal</th>
@@ -116,10 +117,16 @@ export function SaleBuilder({ products }: { products: Product[] }) {
               </thead>
               <tbody>
                 {cart.map((c) => (
-                  <tr key={c.product.id} className="border-b border-slate-50 last:border-0">
-                    <td className="px-4 py-3 font-medium text-slate-700">{c.product.name}</td>
-                    <td className="px-4 py-3 text-center tnum">{c.quantity}</td>
-                    <td className="px-4 py-3 text-right font-medium text-slate-700 tnum">
+                  <motion.tr
+                    key={c.product.id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="border-b border-slate-50 last:border-0 dark:border-slate-800/60"
+                  >
+                    <td className="px-4 py-3 font-medium text-slate-700 dark:text-slate-200">{c.product.name}</td>
+                    <td className="px-4 py-3 text-center tnum dark:text-slate-200">{c.quantity}</td>
+                    <td className="px-4 py-3 text-right font-medium text-slate-700 tnum dark:text-slate-200">
                       {formatCurrency(c.product.price * c.quantity)}
                     </td>
                     <td className="px-4 py-3 text-right">
@@ -127,7 +134,7 @@ export function SaleBuilder({ products }: { products: Product[] }) {
                         <Trash2 size={16} />
                       </button>
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))}
               </tbody>
             </table>
@@ -145,10 +152,16 @@ export function SaleBuilder({ products }: { products: Product[] }) {
               ))}
             </Select>
           </div>
-          <div className="flex flex-1 items-center justify-between rounded-xl bg-brand-50 px-5 py-3">
+          <motion.div
+            key={total}
+            initial={{ scale: 1 }}
+            animate={{ scale: [1.03, 1] }}
+            transition={{ duration: 0.25 }}
+            className="flex flex-1 items-center justify-between rounded-xl bg-brand-50 px-5 py-3 dark:bg-brand-500/10"
+          >
             <span className="text-sm font-medium text-brand-500">Total da venda</span>
             <b className="text-2xl font-bold text-brand-500 tnum">{formatCurrency(total)}</b>
-          </div>
+          </motion.div>
         </div>
 
         <Button

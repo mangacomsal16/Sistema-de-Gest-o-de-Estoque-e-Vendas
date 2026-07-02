@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { DollarSign, ShoppingBag, Boxes, AlertTriangle } from 'lucide-react';
 import { StatCard } from '../components/ui/StatCard';
 import { Spinner } from '../components/ui/Spinner';
@@ -18,29 +19,37 @@ export function DashboardPage() {
       {/* Métricas principais */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
+          index={0}
           label="Faturamento total"
-          value={formatCurrency(data.totalRevenue)}
+          value={data.totalRevenue}
+          format={formatCurrency}
           hint={`${formatNumber(data.salesCount)} vendas no total`}
           icon={<DollarSign size={18} />}
           tone="indigo"
         />
         <StatCard
+          index={1}
           label="Vendas de hoje"
-          value={formatCurrency(data.todayRevenue)}
+          value={data.todayRevenue}
+          format={formatCurrency}
           hint={`${formatNumber(data.todaySalesCount)} venda(s) hoje`}
           icon={<ShoppingBag size={18} />}
           tone="emerald"
         />
         <StatCard
+          index={2}
           label="Produtos em estoque"
-          value={formatNumber(data.totalStockUnits)}
+          value={data.totalStockUnits}
+          format={formatNumber}
           hint={`${data.productCount} produtos ativos`}
           icon={<Boxes size={18} />}
           tone="amber"
         />
         <StatCard
+          index={3}
           label="Estoque baixo"
-          value={formatNumber(data.lowStockCount)}
+          value={data.lowStockCount}
+          format={formatNumber}
           hint="produtos precisam de reposição"
           icon={<AlertTriangle size={18} />}
           tone="red"
@@ -54,10 +63,16 @@ export function DashboardPage() {
       </div>
 
       {/* Painéis */}
-      <div className="grid gap-4 lg:grid-cols-2">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4 }}
+        className="grid gap-4 lg:grid-cols-2"
+      >
         <LowStockPanel products={data.lowStockProducts} />
         <RecentSalesPanel sales={data.recentSales} />
-      </div>
+      </motion.div>
     </div>
   );
 }
